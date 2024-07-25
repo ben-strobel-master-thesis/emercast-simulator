@@ -20,24 +20,67 @@ namespace Editor
             {
                 DestroyImmediate(obo);
             }
+
+            List<GameObject> CityParts = new List<GameObject>();
             
-            // Would be better to stream but works with big file, so good enough
-            var gmlResource = Resources.Load<TextAsset>("gml-data/688_5334");
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/688_5334"), targetScene));
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/688_5336"), targetScene));
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/688_5338"), targetScene));
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/690_5334"), targetScene));
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/690_5336"), targetScene));
+            CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/690_5338"), targetScene));
+
+            var parent = new GameObject { name = "City", tag = "GeneratedBuildingObject" };
+            SceneManager.MoveGameObjectToScene(parent, targetScene.EditingScene);
+            var center = Vector3.zero;
+            foreach (var part in CityParts)
+            {
+                center += part.transform.position;
+            }
+
+            center /= CityParts.Count;
+            parent.transform.position = center;
+
+            foreach (var part in CityParts)
+            {
+                part.transform.parent = parent.transform;
+            }
+        }
+        
+        private static GameObject GenerateCityPart(TextAsset gmlResource, SubScene targetScene)
+        {
             var gmlFile = gmlResource.text;
             var lines = gmlFile.Split("\r\n");
             Debug.Log("Lines in GML file: " + lines.Length);
             var city = ParserGml.LoadGml(lines);
             Debug.Log("Parsed " + city.Count + " buildings");
-            var i = 0;
+        
+            var center = Vector3.zero;
+            var parent = new GameObject { name = "CityPart " + gmlResource.name, tag = "GeneratedBuildingObject" };
+            SceneManager.MoveGameObjectToScene(parent, targetScene.EditingScene);
+
+            List<GameObject> gos = new List<GameObject>();
+            
+            var counter = 0;
             foreach (var b in city)
             {
-                b.DrawNewNew(targetScene.EditingScene);
-                Debug.Log("Created Building #" + i);
-                i++;
+                var go = b.CreateGameObject(targetScene.EditingScene);
+                center += go.transform.position;
+                gos.Add(go);
+                counter++;
             }
-            
+        
+            center /= counter;
+            parent.transform.position = center;
+
+            foreach (var go in gos)
+            {
+                go.transform.parent = parent.transform;
+            }
+                    
             EditorSceneManager.MarkSceneDirty(targetScene.EditingScene);
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+            return parent;
         }
     }
 }
