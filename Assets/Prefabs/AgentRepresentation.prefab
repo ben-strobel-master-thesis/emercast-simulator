@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5881704544511506066}
   - component: {fileID: 3112847349841125886}
   - component: {fileID: 2420135629153172179}
+  - component: {fileID: 8771433853009902398}
+  - component: {fileID: 2969927774679718320}
   m_Layer: 0
   m_Name: AgentRepresentation
   m_TagString: Untagged
@@ -88,6 +90,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Radius: 0.5
   Height: 2
+--- !u!114 &8771433853009902398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3344068389548463665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d72058503702eb42aca97d680e69de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Layers: -1
+--- !u!114 &2969927774679718320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3344068389548463665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0344116cd75eaaf488b894904a1649d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Radius: 2
+  Angle: 230
+  MaxAngle: 300
+  Mode: 3
+  BlockedStop: 0
+  UseWalls: 0
+  m_Layers: -1
 --- !u!1 &7431158670403821418
 GameObject:
   m_ObjectHideFlags: 0
