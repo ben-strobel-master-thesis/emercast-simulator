@@ -136,7 +136,6 @@ GameObject:
   - component: {fileID: 219769108}
   - component: {fileID: 219769109}
   - component: {fileID: 219769110}
-  - component: {fileID: 219769111}
   m_Layer: 0
   m_Name: AgentRepresentation
   m_TagString: Untagged
@@ -264,21 +263,6 @@ MonoBehaviour:
     x: 10
     y: 10
     z: 10
---- !u!114 &219769111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 219769103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb1c05fb291f6d0419037cf7859e55f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 569525811}
-  Radius: 4
-  EveryFrame: 0
 --- !u!1 &569525810
 GameObject:
   m_ObjectHideFlags: 0
