@@ -30,7 +30,7 @@ namespace Editor
             CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/690_5336"), targetScene));
             CityParts.Add(GenerateCityPart(Resources.Load<TextAsset>("gml-data/690_5338"), targetScene));
 
-            var parent = new GameObject { name = "City", tag = "GeneratedBuildingObject" };
+            var parent = new GameObject { name = "City", tag = "GeneratedBuildingObject", isStatic = true };
             SceneManager.MoveGameObjectToScene(parent, targetScene.EditingScene);
             var center = Vector3.zero;
             foreach (var part in CityParts)
@@ -56,7 +56,7 @@ namespace Editor
             Debug.Log("Parsed " + city.Count + " buildings");
         
             var center = Vector3.zero;
-            var parent = new GameObject { name = "CityPart " + gmlResource.name, tag = "GeneratedBuildingObject" };
+            var parent = new GameObject { name = "CityPart " + gmlResource.name, tag = "GeneratedBuildingObject", isStatic = true};
             SceneManager.MoveGameObjectToScene(parent, targetScene.EditingScene);
 
             List<GameObject> gos = new List<GameObject>();

@@ -60,7 +60,8 @@ public class Building
             transform =
             {
                 position = center
-            }
+            }, 
+            isStatic = true
         };
         var msh = new Mesh();
 
