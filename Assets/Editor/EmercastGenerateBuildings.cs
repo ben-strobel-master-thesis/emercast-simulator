@@ -15,6 +15,12 @@ namespace Editor
             var targetSceneObject = GameObject.FindGameObjectWithTag("GeneratorTargetScene");
             var targetScene = targetSceneObject.GetComponent<SubScene>();
             
+            var oldBuildingObjects = GameObject.FindGameObjectsWithTag("GeneratedBuildingObject");
+            foreach (var obo in oldBuildingObjects)
+            {
+                DestroyImmediate(obo);
+            }
+            
             // Would be better to stream but works with big file, so good enough
             var gmlResource = Resources.Load<TextAsset>("gml-data/688_5334");
             var gmlFile = gmlResource.text;
@@ -23,12 +29,14 @@ namespace Editor
             var city = ParserGml.LoadGml(lines);
             Debug.Log("Parsed " + city.Count + " buildings");
             var i = 0;
-            foreach (var b in city)
+            city[0].DrawTest(targetScene.EditingScene);
+            // city[1].Draw(targetScene.EditingScene);
+            /*foreach (var b in city)
             {
                 b.Draw(targetScene.EditingScene);
                 Debug.Log("Created Building #" + i);
                 i++;
-            }
+            }*/
             
             EditorSceneManager.MarkSceneDirty(targetScene.EditingScene);
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
