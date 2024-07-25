@@ -17,7 +17,7 @@ namespace Agents.Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _random = new Random((uint)DateTime.Now.Millisecond);
+            _random = new Random(1337);
         }
 
         [BurstCompile]
