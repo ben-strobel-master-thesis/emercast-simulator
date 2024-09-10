@@ -4,33 +4,21 @@ using System;
 
 public class ParserGml
 {
-    static float[] StringArrayToFloatArray(string[] sa)
+    static double[] StringArrayToDoubleArray(string[] stringArray)
     {
-        float[] res;
-
-        // Remove last element if null
-        if(sa[sa.Length-1] == "")
-            res = new float[sa.Length-1];
-        else
-            res = new float[sa.Length];
-
-        for (int i = 0; i < sa.Length;i++)
+        // Skipping last point, since it just repeats first point
+        var res = new double[stringArray.Length-3];
+        
+        for (var i = 0; i < res.Length; i++)
         {
-            try
-            {
-                res[i] = float.Parse(sa[i].Replace('.', ','));
-            }
-            catch
-            {
-
-            }
+            res[i] = double.Parse(stringArray[i].Replace('.', ','));
         }
 
         return res;
     }
 
 
-    public static List<Building> LoadGml(string[] lines)
+    public static List<Building> LoadGml(string[] lines, int xOffset, int yOffset)
     {
         List<Building> city = new List<Building>();
         Building buildingtmp = new Building();
@@ -46,11 +34,11 @@ public class ParserGml
 
             if ( l.Contains("<gml:posList"))
             {
-                string tmp = l.Substring(l.IndexOf(">")+1);
+                var tmp = l.Substring(l.IndexOf(">")+1);
                 tmp = tmp.Substring(0, tmp.Length - "</gml:posList>".Length);
-                string[] valueString = tmp.Split(' ');
-                float[] valueFloat = StringArrayToFloatArray(valueString);
-                buildingtmp.AddPoly(valueFloat);               
+                var valueString = tmp.Split(' ');
+                var doubleValues = StringArrayToDoubleArray(valueString);
+                buildingtmp.AddPoly(doubleValues, xOffset, yOffset);               
             }
         }
         return city;
