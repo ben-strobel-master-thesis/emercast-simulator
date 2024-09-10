@@ -83,7 +83,7 @@ namespace ProjectDawn.Navigation
                     // Handle case if failde to map location
                     if (location.polygon.IsNull())
                     {
-                        UnityEngine.Debug.LogWarning("Failed to map agent destination to nav mesh location. This can happen either if nav mesh is not present or property MappingExtent value is too low.");
+                        // UnityEngine.Debug.LogWarning("Failed to map agent destination to nav mesh location. This can happen either if nav mesh is not present or property MappingExtent value is too low.");
                     }
 
                     // Update destination to avoid mapping location again
