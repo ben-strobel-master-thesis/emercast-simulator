@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2420135629153172179}
   - component: {fileID: 8771433853009902398}
   - component: {fileID: -2292529559735328468}
-  - component: {fileID: -6760480097483079354}
+  - component: {fileID: 4927649775788519618}
   m_Layer: 0
   m_Name: AgentRepresentation
   m_TagString: Untagged
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7549c2638716dfc448a0f6e83c8a9756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-6760480097483079354
+--- !u!114 &4927649775788519618
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5412cfcb738c3f74b9a712077b4c4866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Radius: 2.3
+  Radius: 2.2
   Weight: 1
   m_Layers: -1
 --- !u!1 &7431158670403821418
