@@ -12,8 +12,7 @@ namespace Agents.Systems
         protected override void OnUpdate()
         {
             var simulatedTime = World.Time.ElapsedTime;
-            var realTime = (DateTime.Now - DateTimeOffset.FromUnixTimeMilliseconds(timeStarted).DateTime).TotalSeconds;
-            Debug.Log(realTime);
+            var realTime = (DateTime.UtcNow - DateTimeOffset.FromUnixTimeMilliseconds(timeStarted).DateTime).TotalSeconds;
             
             if (lastRealTimeLogged + 5 > realTime)
             {
