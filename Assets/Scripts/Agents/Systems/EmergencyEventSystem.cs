@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Agents.Systems
@@ -28,10 +27,12 @@ namespace Agents.Systems
                     protocolComponent.ValueRW.hasMessage = true;
                     foreach (var child in EntityManager.GetBuffer<Child>(entity))
                     {
+#if UNITY_EDITOR
                         ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
                         {
                             Value = new float4(0,255,0,255)
-                        });   
+                        });  
+#endif
                     }
                 }
                 Debug.Log("Applied event to " + appliedTo + " agents");

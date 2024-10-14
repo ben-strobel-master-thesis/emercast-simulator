@@ -56,13 +56,15 @@ namespace Agents.Systems
                     if (otherProtocolComponent.hasMessage)
                     {
                         protocolComponent.ValueRW.hasMessage = true;
+#if UNITY_EDITOR
                         foreach (var child in childrenBufferLookup[entity])
                         {
                             ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
                             {
                                 Value = new float4(0,255,0,255)
                             });   
-                        }
+                        }                  
+#endif
                         break;
                     }
                 }

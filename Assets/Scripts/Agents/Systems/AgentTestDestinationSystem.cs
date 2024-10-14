@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectDawn.Navigation;
+﻿using ProjectDawn.Navigation;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
