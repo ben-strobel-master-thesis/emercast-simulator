@@ -15,11 +15,15 @@ namespace Agents.Systems
     {
         public const uint LayerAgentsBit = (1u << 6);
         private Random _random;
+        private ComponentLookup<ProtocolComponent> _protocolComponentLookup;
+        private BufferLookup<Child> _childrenBufferLookup;
         
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         { 
             _random = new Random(1337);
+            _protocolComponentLookup = state.GetComponentLookup<ProtocolComponent>();
+            _childrenBufferLookup = state.GetBufferLookup<Child>();
             
             foreach (var protocolComponent in SystemAPI.Query<RefRW<ProtocolComponent>>())
             {
@@ -42,6 +46,9 @@ namespace Agents.Systems
                 CollidesWith = LayerAgentsBit
             };
             
+            _protocolComponentLookup.Update(ref state);
+            _childrenBufferLookup.Update(ref state);
+            
             var ecb = new EntityCommandBuffer(Allocator.Persistent);
             
             foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
@@ -58,18 +65,16 @@ namespace Agents.Systems
                 collisionWorld.OverlapSphere(transform.ValueRO.Position, 10, ref outHits, collisionFilter);
                 protocolComponent.ValueRW.lastScanTime = currentTime;
                 if(outHits.Length == 0) continue;
-                var protocolComponentLookup = state.GetComponentLookup<ProtocolComponent>();
-                var childrenBufferLookup = state.GetBufferLookup<Child>();
                 foreach (var distanceHit in outHits)
                 {
-                    if (!protocolComponentLookup.HasComponent(distanceHit.Entity)) return;
-                    var otherProtocolComponent = protocolComponentLookup[distanceHit.Entity];
+                    if (!_protocolComponentLookup.HasComponent(distanceHit.Entity)) return;
+                    var otherProtocolComponent = _protocolComponentLookup[distanceHit.Entity];
                     if (otherProtocolComponent.hasMessage)
                     {
                         protocolComponent.ValueRW.hasMessage = true;
 #if UNITY_EDITOR
-                        if(!childrenBufferLookup.HasBuffer(entity)) continue;
-                        foreach (var child in childrenBufferLookup[entity])
+                        if(!_childrenBufferLookup.HasBuffer(entity)) continue;
+                        foreach (var child in _childrenBufferLookup[entity])
                         {
                             ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
                             {
