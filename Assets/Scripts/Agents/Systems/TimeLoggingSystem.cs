@@ -1,4 +1,5 @@
 using System;
+using Agents.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -18,8 +19,22 @@ namespace Agents.Systems
             {
                 return;
             }
+
+            var withMessage = 0;
+            var withoutMessage = 0;
+            foreach (var protocolComponent in SystemAPI.Query<RefRO<ProtocolComponent>>())
+            {
+                if (protocolComponent.ValueRO.hasMessage)
+                {
+                    withMessage++;
+                }
+                else
+                {
+                    withoutMessage++;
+                }
+            }
             
-            Debug.Log("Simulated time: " + simulatedTime + " Real time: " + realTime);
+            Debug.Log("Simulated time: " + simulatedTime + " Real time: " + realTime + " Msg: " + withMessage + " NoMsg: " + withoutMessage);
             lastRealTimeLogged = realTime;
         }
     }

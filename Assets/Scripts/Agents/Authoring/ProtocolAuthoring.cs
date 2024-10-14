@@ -1,6 +1,7 @@
 ﻿using Agents.Components;
 using Unity.Entities;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Agents.Authoring
 {
@@ -11,10 +12,11 @@ namespace Agents.Authoring
             public override void Bake(ProtocolAuthoringAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.None);
+                
                 AddComponent(entity, new ProtocolComponent()
                 {
                     hasMessage = false,
-                    lastScanTime = 0f
+                    lastScanTime = 0
                 });
             }
         }
