@@ -15,8 +15,8 @@ namespace Agents.Authoring
                 
                 AddComponent(entity, new ProtocolComponent()
                 {
-                    hasMessage = false,
-                    lastScanTime = 0
+                    HasMessage = false,
+                    PhaseChangedTime = 0
                 });
             }
         }

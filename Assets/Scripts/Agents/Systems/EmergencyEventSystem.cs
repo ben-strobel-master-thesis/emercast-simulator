@@ -24,7 +24,7 @@ namespace Agents.Systems
                 {
                     if (math.distance(pos, transform.ValueRO.Position) > 300) continue;
                     appliedTo++;
-                    protocolComponent.ValueRW.hasMessage = true;
+                    protocolComponent.ValueRW.HasMessage = true;
                     foreach (var child in EntityManager.GetBuffer<Child>(entity))
                     {
 #if UNITY_EDITOR

@@ -27,7 +27,7 @@ namespace Agents.Systems
             
             foreach (var protocolComponent in SystemAPI.Query<RefRW<ProtocolComponent>>())
             {
-                protocolComponent.ValueRW.lastScanTime = _random.NextDouble(-5, 10);
+                protocolComponent.ValueRW.PhaseChangedTime = _random.NextDouble(-5, 10);
             }
             
             state.RequireForUpdate<PhysicsWorldSingleton>();
@@ -53,25 +53,25 @@ namespace Agents.Systems
             
             foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
             {
-                if (protocolComponent.ValueRO.hasMessage) continue;
+                if (protocolComponent.ValueRO.HasMessage) continue;
 
-                if (protocolComponent.ValueRO.lastScanTime == 0)
+                if (protocolComponent.ValueRO.PhaseChangedTime == 0)
                 {
-                    protocolComponent.ValueRW.lastScanTime = _random.NextDouble(0, 5);
+                    protocolComponent.ValueRW.PhaseChangedTime = _random.NextDouble(0, 5);
                 }
                 
-                if (currentTime - protocolComponent.ValueRO.lastScanTime < 5) continue;
+                if (currentTime - protocolComponent.ValueRO.PhaseChangedTime < 5) continue;
                 var outHits = new NativeList<DistanceHit>(Allocator.Temp);
                 collisionWorld.OverlapSphere(transform.ValueRO.Position, 10, ref outHits, collisionFilter);
-                protocolComponent.ValueRW.lastScanTime = currentTime;
+                protocolComponent.ValueRW.PhaseChangedTime = currentTime;
                 if(outHits.Length == 0) continue;
                 foreach (var distanceHit in outHits)
                 {
                     if (!_protocolComponentLookup.HasComponent(distanceHit.Entity)) return;
                     var otherProtocolComponent = _protocolComponentLookup[distanceHit.Entity];
-                    if (otherProtocolComponent.hasMessage)
+                    if (otherProtocolComponent.HasMessage)
                     {
-                        protocolComponent.ValueRW.hasMessage = true;
+                        protocolComponent.ValueRW.HasMessage = true;
 #if UNITY_EDITOR
                         if(!_childrenBufferLookup.HasBuffer(entity)) continue;
                         foreach (var child in _childrenBufferLookup[entity])

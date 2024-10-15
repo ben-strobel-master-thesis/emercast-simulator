@@ -4,8 +4,10 @@ namespace Agents.Components
 {
     public struct ProtocolComponent : IComponentData
     {
-        public bool hasMessage;
+        public uint Phase;
+        public double PhaseChangedTime;
         
-        public double lastScanTime;
+        public bool HasMessage;
+        public uint Hops;
     }
 }

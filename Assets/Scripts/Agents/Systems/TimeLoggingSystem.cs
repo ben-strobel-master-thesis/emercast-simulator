@@ -24,7 +24,7 @@ namespace Agents.Systems
             var withoutMessage = 0;
             foreach (var protocolComponent in SystemAPI.Query<RefRO<ProtocolComponent>>())
             {
-                if (protocolComponent.ValueRO.hasMessage)
+                if (protocolComponent.ValueRO.HasMessage)
                 {
                     withMessage++;
                 }
