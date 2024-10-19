@@ -1,7 +1,7 @@
 ﻿using Agents.Components;
+using Scenario.Components;
 using Unity.Entities;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Agents.Authoring
 {
@@ -15,9 +15,13 @@ namespace Agents.Authoring
                 
                 AddComponent(entity, new ProtocolComponent()
                 {
+                    Id = 0,
                     HasMessage = false,
-                    PhaseChangedTime = 0
+                    PhaseChangedTime = 0,
+                    Hops = 0,
+                    Phase = 0
                 });
+                AddBuffer<ScenarioCommandComponent>(entity);
             }
         }
     }

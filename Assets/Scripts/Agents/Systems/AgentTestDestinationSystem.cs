@@ -21,13 +21,14 @@ namespace Agents.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            return;
             foreach (var (agentBody, transform) in SystemAPI.Query<RefRW<AgentBody>, RefRO<LocalTransform>>())
             {
                 if (agentBody.ValueRO.IsStopped || agentBody.ValueRO.Destination is { x: < 0.1f and > -0.1f, y: < 0.1f and > -0.1f })
                 {
-                    var x = _random.NextFloat(-1000, 1000);
+                    var x = _random.NextFloat(-500, 500);
                     var y = transform.ValueRO.Position.y;
-                    var z = _random.NextFloat(-1000, 1000);
+                    var z = _random.NextFloat(-500, 500);
                     agentBody.ValueRW.SetDestination(new float3(x, y, z));
                 }
             }

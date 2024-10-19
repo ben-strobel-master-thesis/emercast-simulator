@@ -6,29 +6,20 @@ using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Rendering;
 using Unity.Transforms;
-using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 namespace Agents.Systems
 {
     public partial struct ProtocolSystem : ISystem
     {
         public const uint LayerAgentsBit = (1u << 6);
-        private Random _random;
         private ComponentLookup<ProtocolComponent> _protocolComponentLookup;
         private BufferLookup<Child> _childrenBufferLookup;
         
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         { 
-            _random = new Random(1337);
             _protocolComponentLookup = state.GetComponentLookup<ProtocolComponent>();
             _childrenBufferLookup = state.GetBufferLookup<Child>();
-            
-            foreach (var protocolComponent in SystemAPI.Query<RefRW<ProtocolComponent>>())
-            {
-                protocolComponent.ValueRW.PhaseChangedTime = _random.NextDouble(-5, 10);
-            }
             
             state.RequireForUpdate<PhysicsWorldSingleton>();
         }
@@ -54,11 +45,6 @@ namespace Agents.Systems
             foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
             {
                 if (protocolComponent.ValueRO.HasMessage) continue;
-
-                if (protocolComponent.ValueRO.PhaseChangedTime == 0)
-                {
-                    protocolComponent.ValueRW.PhaseChangedTime = _random.NextDouble(0, 5);
-                }
                 
                 if (currentTime - protocolComponent.ValueRO.PhaseChangedTime < 5) continue;
                 var outHits = new NativeList<DistanceHit>(Allocator.Temp);
