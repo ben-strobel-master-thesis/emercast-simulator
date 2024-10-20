@@ -34,7 +34,7 @@ namespace General.Systems
                 }
             }
             
-            Debug.Log("Simulated time: " + simulatedTime + " Real time: " + realTime + " Msg: " + withMessage + " NoMsg: " + withoutMessage);
+            Debug.Log("METRICS|" +simulatedTime + "|" + realTime + "|" + withMessage + "|" + withoutMessage);
             lastRealTimeLogged = realTime;
         }
     }
