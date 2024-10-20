@@ -31,7 +31,6 @@ namespace Agents.Systems
                 var scenarioCommandBuffer = _bufferLookup[entity];
                 if (commandPointer.ValueRO.NextCommandIndex >= scenarioCommandBuffer.Length)
                 {
-                    commandPointer.ValueRW.NextCommandIndex = -1;
                     continue;
                 }
                 var currentCommand = scenarioCommandBuffer[commandPointer.ValueRO.NextCommandIndex];

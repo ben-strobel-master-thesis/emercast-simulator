@@ -37,6 +37,7 @@ namespace Scenario.Systems
                 {
                     if (math.distance(new float3(scenarioFileProcessedTagComponent.BroadcastPositionX, 0, scenarioFileProcessedTagComponent.BroadcastPositionZ), transform.ValueRO.Position) > scenarioFileProcessedTagComponent.BroadcastRadius) continue;
                     protocolComponent.ValueRW.HasMessage = true;
+                    protocolComponent.ValueRW.Hops = 0;
                     foreach (var child in state.EntityManager.GetBuffer<Child>(entity))
                     {
 #if UNITY_EDITOR

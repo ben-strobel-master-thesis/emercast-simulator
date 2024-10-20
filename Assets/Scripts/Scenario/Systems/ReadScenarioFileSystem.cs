@@ -132,6 +132,7 @@ namespace Scenario.Systems
                 if (!agentScenarioCommandDictionary.ContainsKey(spawnCommand.IdValue.Value)) continue;
                 var agentCommands = agentScenarioCommandDictionary[spawnCommand.IdValue.Value];
                 Debug.Log("Agent " + spawnCommand.IdValue.Value + " has " + agentCommands.Count + " commands queued.");
+                agentCommands.Reverse(); // Adding to buffer array is first in last out
                 foreach (var agentCommand in agentCommands)
                 {
                     agentCommandBuffer.Add(agentCommand);

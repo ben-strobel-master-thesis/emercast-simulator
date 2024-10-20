@@ -28,19 +28,10 @@ namespace General.Systems
                 
                 // TODO Default values
                 Phase0Duration = 5, // Standby
-                Phase0PreDelay = 0,
-                
                 Phase1Duration = 2, // Establishing Connection
-                Phase1PreDelay = 0,
-                
                 Phase2Duration = 1, // SystemMessage Exchange
-                Phase2PreDelay = 0,
-                
                 Phase3Duration = 3, // Message Exchange
-                Phase3PreDelay = 0,
-                
                 Phase4Duration = 1, // Teardown
-                Phase4PreDelay = 0
             };
             
             var args = System.Environment.GetCommandLineArgs();
@@ -95,32 +86,6 @@ namespace General.Systems
                                 break;
                             case 4:
                                 parametersComponent.Phase4Duration = durationValue;
-                                break;
-                        }
-                        break;
-                    case "phase0predelay":
-                    case "phase1predelay":
-                    case "phase2predelay":
-                    case "phase3predelay":
-                    case "phase4predelay":
-                        var delayIndex = uint.Parse(arg.Replace("phase", "").Replace("predelay", ""));
-                        var delayValue = double.Parse(nextArg);
-                        switch (delayIndex)
-                        {
-                            case 0:
-                                parametersComponent.Phase0PreDelay = delayValue;
-                                break;
-                            case 1:
-                                parametersComponent.Phase1PreDelay = delayValue;
-                                break;
-                            case 2:
-                                parametersComponent.Phase2PreDelay = delayValue;
-                                break;
-                            case 3:
-                                parametersComponent.Phase3PreDelay = delayValue;
-                                break;
-                            case 4:
-                                parametersComponent.Phase4PreDelay = delayValue;
                                 break;
                         }
                         break;
