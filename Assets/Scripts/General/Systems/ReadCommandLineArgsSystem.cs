@@ -45,9 +45,17 @@ namespace General.Systems
             
             var args = System.Environment.GetCommandLineArgs();
             
-            for (var i = 0; i <= args.Length - 2; i++)
+            for (var i = 0; i <= args.Length - 1; i++)
             {
                 var arg = args[i];
+
+                if (arg.ToLower() == "-help" || arg.ToLower() == "help")
+                {
+                    PrintHelp();
+                    return;
+                }
+                
+                if(i == args.Length - 1) continue;
                 var nextArg = args[i + 1];
                 
                 if(nextArg == null || !arg.StartsWith("-")) continue;
@@ -129,6 +137,20 @@ namespace General.Systems
             ecb.Playback(EntityManager);
             
             _executed = true;
+        }
+
+        private void PrintHelp()
+        {
+            Debug.Log("Emercast Simulator by Ben Strobel");
+            Debug.Log("");
+            Debug.Log("Simulator specfic arguments:\n\n-Scenariofile <x> Sets the path of the scenariofile that should be read to the string x\n-Seed <x> Sets the seed to the uint x (Optional, default random)\n-ConnectivityRange <x> Sets the max range for two agents to be able to connect/maintain a connection (Optional, default 10)\n-Phase<X>Duration <s> Sets the duration of protocol phase x (0-4) to s seconds (Optional, default 5,2,1,3,1)\n-Phase<X>Delay <s> Sets the delay after a protocol phase x (0-4) to s seconds (Optional, default 0,0,0,0,0)\nThe scenariofile supports the following commands:\nSpawn <Id> <x> <y>\nAddDestination <Id> <x> <y>\nBroadcast <x> <y> <r> <s>\nEndSimulation <s>");
+            Debug.Log("The scenariofile supports the following commands:\nSpawn <Id> <x> <y>\nAddDestination <Id> <x> <y>\nBroadcast <x> <y> <r> <s>\nEndSimulation <s>");
+            Debug.Log("For more unity specific command line arguments, see: https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html");
+            
+            Application.Quit();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
         }
 
         private string ToString(ParametersComponent parameters)
