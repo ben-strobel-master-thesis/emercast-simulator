@@ -19,14 +19,15 @@ namespace Scenario.Systems
         protected override void OnUpdate()
         {
             if (_executed) return;
-            var parametersFound = SystemAPI.TryGetSingleton(out ParametersComponent parameters);
+            var parametersFound = SystemAPI.TryGetSingleton<ParametersComponent>(out var parameters);
             if (!parametersFound) return;
 
             var random = new Random(parameters.Seed);
             var spawnCommandList = new List<ScenarioCommandComponent>();
             var agentScenarioCommandDictionary = new Dictionary<uint, List<ScenarioCommandComponent>>();
             var scenarioFileProcessedTagComponent = new ScenarioFileProcessedTagComponent();
-            var scenarioHelperComponent = SystemAPI.GetSingleton<ScenarioHelperComponent>();
+            var scenarioHelperFound = SystemAPI.TryGetSingleton<ScenarioHelperComponent>(out var scenarioHelperComponent);
+            if (!scenarioHelperFound) return;
             
             EntityCommandBuffer ecb = new(Allocator.Persistent);
 

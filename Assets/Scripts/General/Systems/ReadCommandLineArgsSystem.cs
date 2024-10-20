@@ -44,14 +44,14 @@ namespace General.Systems
             };
             
             var args = System.Environment.GetCommandLineArgs();
-            Debug.Log("Command line args: " + string.Join(" ", args));
             
-            for (var i = args.Length - 1; i >= 0; i--)
+            for (var i = 0; i <= args.Length - 2; i++)
             {
                 var arg = args[i];
-                var nextArg = args.Length -1 > i + 1 ? args[i + 1] : null;
+                var nextArg = args[i + 1];
                 
-                if(nextArg == null) continue;
+                if(nextArg == null || !arg.StartsWith("-")) continue;
+                arg = arg[1..];
 
                 switch (arg.ToLower())
                 {

@@ -12,7 +12,7 @@ namespace Scenario.Authoring
         {
             public override void Bake(ScenarioHelperAuthoring authoring)
             {
-                var entity = GetEntity(TransformUsageFlags.None);
+                var entity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(entity, new ScenarioHelperComponent()
                 {
                     AgentRepresentationPrefabEntity = GetEntity(authoring.agentRepresentation, TransformUsageFlags.Dynamic),
