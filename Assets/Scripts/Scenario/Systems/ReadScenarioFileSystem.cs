@@ -138,6 +138,10 @@ namespace Scenario.Systems
                 }
                 agentCommandBuffer.Length = agentCommands.Count;
                 agentCommands.Capacity = agentCommands.Count;
+                ecb.AddComponent(entity, new AgentScenarioCommandPointerComponent()
+                {
+                    NextCommandIndex = agentCommandBuffer.Length > 0 ? 0 : -1
+                });
             }
             
             ecb.AddComponent(readScenarioFileEntity, scenarioFileProcessedTagComponent);
