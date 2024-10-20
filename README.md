@@ -21,7 +21,6 @@ Simulator specfic arguments:
 - -Seed \<x\> Sets the seed to the uint x *(Optional, default random)*
 - -ConnectivityRange \<x\> Sets the max range for two agents to be able to connect/maintain a connection *(Optional, default 10)*
 - -Phase\<X\>Duration \<s\> Sets the duration of protocol phase x (0-4) to s seconds *(Optional, default 5,2,1,3,1)*
-- -Phase\<X\>Delay \<s\> Sets the delay after a protocol phase x (0-4) to s seconds *(Optional, default 0,0,0,0,0)*
 
 ### The scenariofile supports the following commands:
 - Spawn \<Id\> \<x\> \<y\>
