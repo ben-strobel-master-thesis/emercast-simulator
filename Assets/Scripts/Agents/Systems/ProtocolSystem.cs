@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Rendering;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace Agents.Systems
 {
@@ -49,6 +50,15 @@ namespace Agents.Systems
             
             foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
             {
+                if (protocolComponent.ValueRO.Phase != 0 && currentTime - protocolComponent.ValueRO.PhaseChangedTime > 10)
+                {
+                    protocolComponent.ValueRW.Phase = 0;
+                    protocolComponent.ValueRW.PhaseChangedTime = currentTime;
+                    protocolComponent.ValueRW.OtherEntity = Entity.Null;
+                    EmitProtocolTimedOutEvent(protocolComponent.ValueRO.Id, currentTime);
+                    continue;
+                }
+                
                 if (protocolComponent.ValueRO.Phase == 0)
                 {
                     if(currentTime - protocolComponent.ValueRO.PhaseChangedTime < parameters.Phase0Duration) continue;
@@ -72,10 +82,11 @@ namespace Agents.Systems
                 {
                     if(currentTime - protocolComponent.ValueRO.PhaseChangedTime < parameters.Phase1Duration) continue;
                     var otherProtocolComponent = _protocolComponentLookup[protocolComponent.ValueRO.OtherEntity];
-                    if(otherProtocolComponent.OtherEntity != entity || otherProtocolComponent.Phase <= protocolComponent.ValueRO.Phase) continue;
+                    if(otherProtocolComponent.OtherEntity != entity) continue;
                     var otherTransform = _transformComponentLookup[otherProtocolComponent.OtherEntity];
                     if (math.distance(transform.ValueRO.Position, otherTransform.Position) < parameters.ConnectivityRange)
                     {
+                        if(otherProtocolComponent.Phase < protocolComponent.ValueRO.Phase) continue;
                         protocolComponent.ValueRW.Phase = 2;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
                         if (otherProtocolComponent.Phase == 2)
@@ -95,10 +106,11 @@ namespace Agents.Systems
                 {
                     if(currentTime - protocolComponent.ValueRO.PhaseChangedTime < parameters.Phase2Duration) continue;
                     var otherProtocolComponent = _protocolComponentLookup[protocolComponent.ValueRO.OtherEntity];
-                    if(otherProtocolComponent.OtherEntity != entity || otherProtocolComponent.Phase <= protocolComponent.ValueRO.Phase) continue;
+                    if(otherProtocolComponent.OtherEntity != entity) continue;
                     var otherTransform = _transformComponentLookup[otherProtocolComponent.OtherEntity];
                     if (math.distance(transform.ValueRO.Position, otherTransform.Position) < parameters.ConnectivityRange)
                     {
+                        if(otherProtocolComponent.Phase < protocolComponent.ValueRO.Phase) continue;
                         protocolComponent.ValueRW.Phase = 3;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
                     }
@@ -114,45 +126,49 @@ namespace Agents.Systems
                 {
                     if(currentTime - protocolComponent.ValueRO.PhaseChangedTime < parameters.Phase3Duration) continue;
                     var otherProtocolComponent = _protocolComponentLookup[protocolComponent.ValueRO.OtherEntity];
-                    if(otherProtocolComponent.OtherEntity != entity || otherProtocolComponent.Phase <= protocolComponent.ValueRO.Phase) continue;
+                    if(otherProtocolComponent.OtherEntity != entity) continue;
                     var otherTransform = _transformComponentLookup[otherProtocolComponent.OtherEntity];
                     if (math.distance(transform.ValueRO.Position, otherTransform.Position) < parameters.ConnectivityRange)
                     {
+                        if(otherProtocolComponent.Phase < protocolComponent.ValueRO.Phase) continue;
                         protocolComponent.ValueRW.Phase = 4;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
-                        if (protocolComponent.ValueRO.HasMessage && !otherProtocolComponent.HasMessage)
+                        if (protocolComponent.ValueRO.Id > otherProtocolComponent.Id) // Simulating one of the two peers, being the server
                         {
-                            otherProtocolComponent.HasMessage = true;
-                            otherProtocolComponent.Hops = protocolComponent.ValueRO.Hops + 1;
-#if UNITY_EDITOR
-                            if(!_childrenBufferLookup.HasBuffer(otherProtocolComponent.OtherEntity)) continue;
-                            foreach (var child in _childrenBufferLookup[otherProtocolComponent.OtherEntity])
+                            if (protocolComponent.ValueRO.HasMessage && !otherProtocolComponent.HasMessage)
                             {
-                                ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
+                                otherProtocolComponent.HasMessage = true;
+                                otherProtocolComponent.Hops = protocolComponent.ValueRO.Hops + 1;
+#if UNITY_EDITOR
+                                if(!_childrenBufferLookup.HasBuffer(otherProtocolComponent.OtherEntity)) continue;
+                                foreach (var child in _childrenBufferLookup[otherProtocolComponent.OtherEntity])
                                 {
-                                    Value = new float4(0,255,0,255)
-                                });
-                            }
+                                    ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
+                                    {
+                                        Value = new float4(0,255,0,255)
+                                    });
+                                }
                             
-                            EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
+                                EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
 #endif
-                        } 
-                        else if (otherProtocolComponent.HasMessage && !protocolComponent.ValueRO.HasMessage)
-                        {
-                            protocolComponent.ValueRW.HasMessage = true;
-                            protocolComponent.ValueRW.Hops = otherProtocolComponent.Hops + 1;
-#if UNITY_EDITOR
-                            if(!_childrenBufferLookup.HasBuffer(entity)) continue;
-                            foreach (var child in _childrenBufferLookup[entity])
+                            } 
+                            else if (otherProtocolComponent.HasMessage && !protocolComponent.ValueRO.HasMessage)
                             {
-                                ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
+                                protocolComponent.ValueRW.HasMessage = true;
+                                protocolComponent.ValueRW.Hops = otherProtocolComponent.Hops + 1;
+#if UNITY_EDITOR
+                                if(!_childrenBufferLookup.HasBuffer(entity)) continue;
+                                foreach (var child in _childrenBufferLookup[entity])
                                 {
-                                    Value = new float4(0,255,0,255)
-                                });
-                            }
+                                    ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
+                                    {
+                                        Value = new float4(0,255,0,255)
+                                    });
+                                }
 
-                            EmitMessageTransmittedEvent(otherProtocolComponent.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.Hops + 1, currentTime);
+                                EmitMessageTransmittedEvent(otherProtocolComponent.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.Hops + 1, currentTime);
 #endif
+                            }
                         }
                     }
                     else
@@ -169,13 +185,6 @@ namespace Agents.Systems
                     protocolComponent.ValueRW.Phase = 0;
                     protocolComponent.ValueRW.PhaseChangedTime = currentTime;
                 }
-
-                if (protocolComponent.ValueRO.Phase != 0 && currentTime - protocolComponent.ValueRO.PhaseChangedTime > 10)
-                {
-                    protocolComponent.ValueRW.Phase = 0;
-                    protocolComponent.ValueRW.PhaseChangedTime = currentTime;
-                    EmitProtocolTimedOutEvent(protocolComponent.ValueRO.Id, currentTime);
-                }
             }
             
             ecb.Playback(state.EntityManager);
@@ -183,22 +192,22 @@ namespace Agents.Systems
 
         private void EmitConnectionEstablishedEvent(uint id1, uint id2, double currentTime)
         {
-            
+            Debug.Log($"|EVENTS|CONNECTION_ESTABLISHED|{id1}|{id2}|{currentTime}");
         }
         
         private void EmitConnectionOutOfRangeEvent(uint id1, uint id2, double currentTime)
         {
-            
+            Debug.Log($"|EVENTS|CONNECTION_OUT_OF_RANGE|{id1}|{id2}|{currentTime}");
         }
         
         private void EmitProtocolTimedOutEvent(uint id1, double currentTime)
         {
-            
+            Debug.Log($"|EVENTS|PROTOCOL_TIMED_OUT|{id1}|{currentTime}");
         }
 
         private void EmitMessageTransmittedEvent(uint id1, uint id2, uint hop, double currentTime)
         {
-            
+            Debug.Log($"|EVENTS|MESSAGE_TRANSMITTED|{id1}|{id2}|{hop}|{currentTime}");
         }
 
         [BurstCompile]

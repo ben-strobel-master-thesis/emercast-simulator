@@ -1,7 +1,7 @@
-Spawn 1 0 525
-Spawn 2 0 -525
+Spawn 1 0 531
+Spawn 2 305 525
 
-AddDestination 2 0 500
+AddDestination 2 -300 520
 
-Broadcast 0 525 300 10
-EndSimulation 2000
+Broadcast 0 525 100 5
+EndSimulation 600
