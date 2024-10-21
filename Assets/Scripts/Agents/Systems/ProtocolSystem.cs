@@ -192,22 +192,22 @@ namespace Agents.Systems
 
         private void EmitConnectionEstablishedEvent(uint id1, uint id2, double currentTime)
         {
-            Debug.Log($"|EVENTS|CONNECTION_ESTABLISHED|{id1}|{id2}|{currentTime}");
+            Debug.Log($"EVENTS|CONNECTION_ESTABLISHED|{id1}|{id2}|{currentTime}");
         }
         
         private void EmitConnectionOutOfRangeEvent(uint id1, uint id2, double currentTime)
         {
-            Debug.Log($"|EVENTS|CONNECTION_OUT_OF_RANGE|{id1}|{id2}|{currentTime}");
+            Debug.Log($"EVENTS|CONNECTION_OUT_OF_RANGE|{id1}|{id2}|{currentTime}");
         }
         
         private void EmitProtocolTimedOutEvent(uint id1, double currentTime)
         {
-            Debug.Log($"|EVENTS|PROTOCOL_TIMED_OUT|{id1}|{currentTime}");
+            Debug.Log($"EVENTS|PROTOCOL_TIMED_OUT|{id1}|{currentTime}");
         }
 
         private void EmitMessageTransmittedEvent(uint id1, uint id2, uint hop, double currentTime)
         {
-            Debug.Log($"|EVENTS|MESSAGE_TRANSMITTED|{id1}|{id2}|{hop}|{currentTime}");
+            Debug.Log($"EVENTS|MESSAGE_TRANSMITTED|{id1}|{id2}|{hop}|{currentTime}");
         }
 
         [BurstCompile]
