@@ -133,12 +133,13 @@ namespace Agents.Systems
                         if(otherProtocolComponent.Phase < protocolComponent.ValueRO.Phase) continue;
                         protocolComponent.ValueRW.Phase = 4;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
-                        if (protocolComponent.ValueRO.Id > otherProtocolComponent.Id) // Simulating one of the two peers, being the server
-                        {
+                         if (protocolComponent.ValueRO.Id > otherProtocolComponent.Id) // Simulating one of the two peers, being the server
+                         {
                             if (protocolComponent.ValueRO.HasMessage && !otherProtocolComponent.HasMessage)
                             {
                                 otherProtocolComponent.HasMessage = true;
                                 otherProtocolComponent.Hops = protocolComponent.ValueRO.Hops + 1;
+                                EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
 #if UNITY_EDITOR
                                 if(!_childrenBufferLookup.HasBuffer(otherProtocolComponent.OtherEntity)) continue;
                                 foreach (var child in _childrenBufferLookup[otherProtocolComponent.OtherEntity])
@@ -148,14 +149,13 @@ namespace Agents.Systems
                                         Value = new float4(0,255,0,255)
                                     });
                                 }
-                            
-                                EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
 #endif
                             } 
                             else if (otherProtocolComponent.HasMessage && !protocolComponent.ValueRO.HasMessage)
                             {
                                 protocolComponent.ValueRW.HasMessage = true;
                                 protocolComponent.ValueRW.Hops = otherProtocolComponent.Hops + 1;
+                                EmitMessageTransmittedEvent(otherProtocolComponent.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.Hops + 1, currentTime);
 #if UNITY_EDITOR
                                 if(!_childrenBufferLookup.HasBuffer(entity)) continue;
                                 foreach (var child in _childrenBufferLookup[entity])
@@ -165,11 +165,9 @@ namespace Agents.Systems
                                         Value = new float4(0,255,0,255)
                                     });
                                 }
-
-                                EmitMessageTransmittedEvent(otherProtocolComponent.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.Hops + 1, currentTime);
 #endif
                             }
-                        }
+                         }
                     }
                     else
                     {
