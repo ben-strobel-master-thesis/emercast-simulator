@@ -2,7 +2,7 @@
 
 ## Download
 
-Download the latest tarball from [https://benstrobel-de.storage.bunnycdn.com/master-thesis/emercast-simulator/latest.tar](https://benstrobel-de.storage.bunnycdn.com/master-thesis/emercast-simulator/latest.tar)
+Download the latest tarball from https://benstrobel.b-cdn.net/master-thesis/emercast-simulator/latest.tar
 
 ## How to run
 
