@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using Agents.Components;
 using Scenario.Components;
 using Unity.Collections;
@@ -19,6 +21,13 @@ namespace Scenario.Systems
         protected override void OnUpdate()
         {
             if (_executed) return;
+            
+            // Circumvent C# culture specific parsing
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            
             var parametersFound = SystemAPI.TryGetSingleton<ParametersComponent>(out var parameters);
             if (!parametersFound) return;
 
@@ -131,7 +140,7 @@ namespace Scenario.Systems
                 var agentCommandBuffer = ecb.AddBuffer<ScenarioCommandComponent>(entity);
                 if (!agentScenarioCommandDictionary.ContainsKey(spawnCommand.IdValue.Value)) continue;
                 var agentCommands = agentScenarioCommandDictionary[spawnCommand.IdValue.Value];
-                Debug.Log("Agent " + spawnCommand.IdValue.Value + " has " + agentCommands.Count + " commands queued.");
+                Debug.Log("Agent" + spawnCommand.IdValue.Value + " has " + agentCommands.Count + " commands queued.");
                 agentCommands.Reverse(); // Adding to buffer array is first in last out
                 foreach (var agentCommand in agentCommands)
                 {

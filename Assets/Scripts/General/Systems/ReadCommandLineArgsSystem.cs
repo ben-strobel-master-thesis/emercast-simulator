@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Threading;
 using Agents.Components;
 using Unity.Collections;
 using Unity.Entities;
@@ -14,12 +16,18 @@ namespace General.Systems
         {
             if (_executed) return;
             var random = new Random();
+            
+            // Circumvent C# culture specific parsing
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             var parametersComponent = new ParametersComponent()
             {
                 Seed = (uint)random.Next(0, int.MaxValue),
 #if UNITY_EDITOR
-                ScenarioFilePath = ".\\Assets\\Resources\\default.emerscenario",
+                ScenarioFilePath = "E:\\Repos\\master_thesis\\script-utils\\scenarios\\emercast-simulator-input\\random-city-1.emerscenario",
 #else
                 ScenarioFilePath = "",
 #endif
