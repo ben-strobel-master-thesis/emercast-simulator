@@ -38,7 +38,7 @@ namespace Scenario.Systems
                 
                 var ecb = new EntityCommandBuffer(Allocator.Persistent);
                 ecb.SetComponent(scenarioFileProcessedTagEntity, scenarioFileProcessedTagComponent);
-                foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
+                foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithEntityAccess())
                 {
                     if (math.distance(new float3(scenarioFileProcessedTagComponent.OutagePositionX, 0, scenarioFileProcessedTagComponent.OutagePositionZ), transform.ValueRO.Position) < scenarioFileProcessedTagComponent.OutageRadius) continue;
                     if (!protocolComponent.ValueRO.HasMessage)
@@ -47,15 +47,15 @@ namespace Scenario.Systems
                     }
                     protocolComponent.ValueRW.HasMessage = true;
                     protocolComponent.ValueRW.Hops = 0;
+#if UNITY_EDITOR
                     foreach (var child in state.EntityManager.GetBuffer<Child>(entity))
                     {
-#if UNITY_EDITOR
                         ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
                         {
                             Value = new float4(0,255,0,255)
                         });  
-#endif
                     }
+#endif
                 }
 
                 if (appliedTo > 0)
