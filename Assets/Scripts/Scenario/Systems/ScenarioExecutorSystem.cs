@@ -14,6 +14,8 @@ namespace Scenario.Systems
 {
     public partial struct ScenarioExecutorSystem : ISystem
     {
+        private double lastTimeBroadcastApplied;
+        
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
@@ -27,8 +29,11 @@ namespace Scenario.Systems
             var scenarioFileProcessedTagEntity = SystemAPI.GetSingletonEntity<ScenarioFileProcessedTagComponent>();
             var simulatedTime = state.WorldUnmanaged.Time.ElapsedTime;
 
-            if (scenarioFileProcessedTagComponent.BroadcastTime != 0f && simulatedTime > scenarioFileProcessedTagComponent.BroadcastTime)
+            var appliedTo = 0;
+            
+            if (simulatedTime > scenarioFileProcessedTagComponent.BroadcastTime && lastTimeBroadcastApplied + 1 < simulatedTime)
             {
+                lastTimeBroadcastApplied = simulatedTime;
                 scenarioFileProcessedTagComponent.BroadcastTime = 0f;
                 
                 var ecb = new EntityCommandBuffer(Allocator.Persistent);
@@ -36,6 +41,10 @@ namespace Scenario.Systems
                 foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
                 {
                     if (math.distance(new float3(scenarioFileProcessedTagComponent.OutagePositionX, 0, scenarioFileProcessedTagComponent.OutagePositionZ), transform.ValueRO.Position) < scenarioFileProcessedTagComponent.OutageRadius) continue;
+                    if (!protocolComponent.ValueRO.HasMessage)
+                    {
+                        appliedTo++;
+                    }
                     protocolComponent.ValueRW.HasMessage = true;
                     protocolComponent.ValueRW.Hops = 0;
                     foreach (var child in state.EntityManager.GetBuffer<Child>(entity))
@@ -48,8 +57,11 @@ namespace Scenario.Systems
 #endif
                     }
                 }
-                
-                Debug.Log("Applied event to agents");
+
+                if (appliedTo > 0)
+                {
+                    Debug.Log($"Applied event to {appliedTo} agents");
+                }
                 
                 ecb.Playback(state.WorldUnmanaged.EntityManager);
             }
