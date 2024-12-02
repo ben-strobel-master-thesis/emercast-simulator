@@ -28,7 +28,6 @@ namespace Agents.Systems
             foreach (var (agentBody, transform, commandPointer, entity) in SystemAPI.Query<RefRW<AgentBody>, RefRO<LocalTransform>, RefRW<AgentScenarioCommandPointerComponent>>().WithEntityAccess())
             {
                 if (agentBody.ValueRO is { IsStopped: false }) continue;
-                if (commandPointer.ValueRO.LastCommandTime + 2 > simulatedTime) continue;
                 if (commandPointer.ValueRO.NextCommandIndex == -1) continue;
                 if(!_bufferLookup.HasBuffer(entity)) continue;
                 var scenarioCommandBuffer = _bufferLookup[entity];
@@ -44,7 +43,6 @@ namespace Agents.Systems
                 var z = currentCommand.YValue.Value;
                     
                 agentBody.ValueRW.SetDestination(new float3(x, y, z));
-                commandPointer.ValueRW.LastCommandTime = simulatedTime;
                 commandPointer.ValueRW.NextCommandIndex = commandPointer.ValueRO.NextCommandIndex + 1;
             }
         }
