@@ -156,7 +156,8 @@ namespace Scenario.Systems
                 agentCommands.Capacity = agentCommands.Count;
                 ecb.AddComponent(entity, new AgentScenarioCommandPointerComponent()
                 {
-                    NextCommandIndex = agentCommandBuffer.Length > 0 ? 0 : -1
+                    NextCommandIndex = agentCommandBuffer.Length > 0 ? 0 : -1,
+                    LastCommandTime = -10
                 });
             }
             

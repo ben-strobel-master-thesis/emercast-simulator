@@ -5,5 +5,6 @@ namespace Agents.Components
     public struct AgentScenarioCommandPointerComponent : IComponentData
     {
         public int NextCommandIndex;
+        public double LastCommandTime;
     }
 }
