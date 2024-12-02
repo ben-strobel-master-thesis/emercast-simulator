@@ -20,13 +20,14 @@ namespace Agents.Systems
         
         [BurstCompile]
         public void OnCreate(ref SystemState state)
-        { 
+        {
             _protocolComponentLookup = state.GetComponentLookup<ProtocolComponent>();
             _transformComponentLookup = state.GetComponentLookup<LocalTransform>(true);
             _childrenBufferLookup = state.GetBufferLookup<Child>();
             
             state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<ParametersComponent>();
+            state.RequireForUpdate<ScenarioFileProcessedTagComponent>();
         }
 
         [BurstCompile]
@@ -35,6 +36,8 @@ namespace Agents.Systems
             var currentTime = SystemAPI.Time.ElapsedTime;
             var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
             var parameters = SystemAPI.GetSingleton<ParametersComponent>();
+            
+            if (!parameters.ProtocolEnabled) return;
             
             var collisionFilter = new CollisionFilter()
             {
@@ -125,24 +128,24 @@ namespace Agents.Systems
                 else if (protocolComponent.ValueRO.Phase == 3)
                 {
                     if(currentTime - protocolComponent.ValueRO.PhaseChangedTime < parameters.Phase3Duration) continue;
-                    var otherProtocolComponent = _protocolComponentLookup[protocolComponent.ValueRO.OtherEntity];
-                    if(otherProtocolComponent.OtherEntity != entity) continue;
-                    var otherTransform = _transformComponentLookup[otherProtocolComponent.OtherEntity];
+                    var otherProtocolComponent = _protocolComponentLookup.GetRefRW(protocolComponent.ValueRO.OtherEntity);
+                    if(otherProtocolComponent.ValueRO.OtherEntity != entity) continue;
+                    var otherTransform = _transformComponentLookup[otherProtocolComponent.ValueRO.OtherEntity];
                     if (math.distance(transform.ValueRO.Position, otherTransform.Position) < parameters.ConnectivityRange)
                     {
-                        if(otherProtocolComponent.Phase < protocolComponent.ValueRO.Phase) continue;
+                        if(otherProtocolComponent.ValueRO.Phase < protocolComponent.ValueRO.Phase) continue;
                         protocolComponent.ValueRW.Phase = 4;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
-                         if (protocolComponent.ValueRO.Id > otherProtocolComponent.Id) // Simulating one of the two peers, being the server
+                         if (protocolComponent.ValueRO.Id > otherProtocolComponent.ValueRO.Id) // Simulating one of the two peers, being the server
                          {
-                            if (protocolComponent.ValueRO.HasMessage && !otherProtocolComponent.HasMessage)
+                            if (protocolComponent.ValueRO.HasMessage && !otherProtocolComponent.ValueRO.HasMessage)
                             {
-                                otherProtocolComponent.HasMessage = true;
-                                otherProtocolComponent.Hops = protocolComponent.ValueRO.Hops + 1;
-                                EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
+                                otherProtocolComponent.ValueRW.HasMessage = true;
+                                otherProtocolComponent.ValueRW.Hops = protocolComponent.ValueRO.Hops + 1;
+                                EmitMessageTransmittedEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.ValueRO.Id, protocolComponent.ValueRO.Hops + 1, currentTime);
 #if UNITY_EDITOR
-                                if(!_childrenBufferLookup.HasBuffer(otherProtocolComponent.OtherEntity)) continue;
-                                foreach (var child in _childrenBufferLookup[otherProtocolComponent.OtherEntity])
+                                if(!_childrenBufferLookup.HasBuffer(protocolComponent.ValueRO.OtherEntity)) continue;
+                                foreach (var child in _childrenBufferLookup[protocolComponent.ValueRO.OtherEntity])
                                 {
                                     ecb.AddComponent(child.Value, new URPMaterialPropertyBaseColor()
                                     {
@@ -151,11 +154,11 @@ namespace Agents.Systems
                                 }
 #endif
                             } 
-                            else if (otherProtocolComponent.HasMessage && !protocolComponent.ValueRO.HasMessage)
+                            else if (otherProtocolComponent.ValueRO.HasMessage && !protocolComponent.ValueRO.HasMessage)
                             {
                                 protocolComponent.ValueRW.HasMessage = true;
-                                protocolComponent.ValueRW.Hops = otherProtocolComponent.Hops + 1;
-                                EmitMessageTransmittedEvent(otherProtocolComponent.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.Hops + 1, currentTime);
+                                protocolComponent.ValueRW.Hops = otherProtocolComponent.ValueRO.Hops + 1;
+                                EmitMessageTransmittedEvent(otherProtocolComponent.ValueRO.Id, protocolComponent.ValueRO.Id, otherProtocolComponent.ValueRO.Hops + 1, currentTime);
 #if UNITY_EDITOR
                                 if(!_childrenBufferLookup.HasBuffer(entity)) continue;
                                 foreach (var child in _childrenBufferLookup[entity])
@@ -171,7 +174,7 @@ namespace Agents.Systems
                     }
                     else
                     {
-                        EmitConnectionOutOfRangeEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.Id, currentTime);
+                        EmitConnectionOutOfRangeEvent(protocolComponent.ValueRO.Id, otherProtocolComponent.ValueRO.Id, currentTime);
                         protocolComponent.ValueRW.Phase = 0;
                         protocolComponent.ValueRW.PhaseChangedTime = currentTime;
                         protocolComponent.ValueRW.OtherEntity = Entity.Null;

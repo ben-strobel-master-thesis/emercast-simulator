@@ -75,11 +75,16 @@ namespace Scenario.Systems
                         }
                         case ScenarioCommandKindEnum.Broadcast:
                         {
-                            if(segments.Length != 5) continue;
-                            scenarioFileProcessedTagComponent.BroadcastPositionX = float.Parse(segments[1]);
-                            scenarioFileProcessedTagComponent.BroadcastPositionZ = float.Parse(segments[2]);
-                            scenarioFileProcessedTagComponent.BroadcastRadius = float.Parse(segments[3]);
-                            scenarioFileProcessedTagComponent.BroadcastTime = double.Parse(segments[4]);
+                            if(segments.Length != 2) continue;
+                            scenarioFileProcessedTagComponent.BroadcastTime = double.Parse(segments[1]);
+                            continue;
+                        }
+                        case ScenarioCommandKindEnum.Outage:
+                        {
+                            if(segments.Length != 4) continue;
+                            scenarioFileProcessedTagComponent.OutagePositionX = float.Parse(segments[1]);
+                            scenarioFileProcessedTagComponent.OutagePositionZ = float.Parse(segments[2]);
+                            scenarioFileProcessedTagComponent.OutageRadius = float.Parse(segments[3]);
                             continue;
                         }
                         case ScenarioCommandKindEnum.EndSimulation:
@@ -117,7 +122,8 @@ namespace Scenario.Systems
                     }
                 }
             }
-
+            
+            Debug.Log("Scenario settings: " + JsonUtility.ToJson(scenarioFileProcessedTagComponent));
             Debug.Log("Executing " + spawnCommandList.Count + " spawn commands");
             
             foreach (var spawnCommand in spawnCommandList)

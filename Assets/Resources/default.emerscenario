@@ -198,5 +198,6 @@ AddDestination 97 105 525
 AddDestination 98 110 525
 AddDestination 99 115 525
 AddDestination 100 120 525
-Broadcast 0 525 300 5
+Outage 0 525 300
+Broadcast 10
 EndSimulation 600

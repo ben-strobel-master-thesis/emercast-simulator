@@ -22,24 +22,25 @@ namespace General.Systems
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
+            
             var parametersComponent = new ParametersComponent()
             {
                 Seed = (uint)random.Next(0, int.MaxValue),
 #if UNITY_EDITOR
-                ScenarioFilePath = "E:\\Repos\\master_thesis\\script-utils\\scenarios\\emercast-simulator-input\\random-city-1.emerscenario",
+                ScenarioFilePath = @".\Assets\Resources\default.emerscenario",
 #else
                 ScenarioFilePath = "",
 #endif
                 
                 ConnectivityRange = 10,
                 
-                // TODO Default values
-                Phase0Duration = 5, // Standby
-                Phase1Duration = 2, // Establishing Connection
-                Phase2Duration = 1, // SystemMessage Exchange
-                Phase3Duration = 3, // Message Exchange
-                Phase4Duration = 1, // Teardown
+                ProtocolEnabled = true,
+                
+                Phase0Duration = 3, // Standby
+                Phase1Duration = 1, // Establishing Connection
+                Phase2Duration = 0.25, // SystemMessage Exchange
+                Phase3Duration = 0.25, // Message Exchange
+                Phase4Duration = 0.5, // Teardown
             };
             
             var args = System.Environment.GetCommandLineArgs();
@@ -64,6 +65,9 @@ namespace General.Systems
                 {
                     case "seed":
                         parametersComponent.Seed = uint.Parse(nextArg);
+                        break;
+                    case "protocol-enabled":
+                        parametersComponent.ProtocolEnabled = bool.Parse(nextArg);
                         break;
                     case "scenariofile":
                         parametersComponent.ScenarioFilePath = nextArg;
@@ -116,8 +120,8 @@ namespace General.Systems
         {
             Debug.Log("Emercast Simulator by Ben Strobel");
             Debug.Log("");
-            Debug.Log("Simulator specfic arguments:\n\n-Scenariofile <x> Sets the path of the scenariofile that should be read to the string x\n-Seed <x> Sets the seed to the uint x (Optional, default random)\n-ConnectivityRange <x> Sets the max range for two agents to be able to connect/maintain a connection (Optional, default 10)\n-Phase<X>Duration <s> Sets the duration of protocol phase x (0-4) to s seconds (Optional, default 5,2,1,3,1)\n-Phase<X>Delay <s> Sets the delay after a protocol phase x (0-4) to s seconds (Optional, default 0,0,0,0,0)\nThe scenariofile supports the following commands:\nSpawn <Id> <x> <y>\nAddDestination <Id> <x> <y>\nBroadcast <x> <y> <r> <s>\nEndSimulation <s>");
-            Debug.Log("The scenariofile supports the following commands:\nSpawn <Id> <x> <y>\nAddDestination <Id> <x> <y>\nBroadcast <x> <y> <r> <s>\nEndSimulation <s>");
+            Debug.Log("Simulator specfic arguments:\n\n-Scenariofile <x> Sets the path of the scenariofile that should be read to the string x\n-Seed <x> Sets the seed to the uint x (Optional, default random)\n-Protocol-Enabled <x> Overwrites whether the peer to peer protocol between nodes is enabled (Optional, default true)\n-ConnectivityRange <x> Sets the max range for two agents to be able to connect/maintain a connection (Optional, default 10)\n-Phase<X>Duration <s> Sets the duration of protocol phase x (0-4) to s seconds (Optional, default 5,2,1,3,1)\n-Phase<X>Delay <s> Sets the delay after a protocol phase x (0-4) to s seconds (Optional, default 0,0,0,0,0)\n");
+            Debug.Log("The scenariofile supports the following commands:\nSpawn <Id> <x> <y>\nAddDestination <Id> <x> <y>\nOutage <x> <y> <r>\nBroadcast <s>\nEndSimulation <s>");
             Debug.Log("For more unity specific command line arguments, see: https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html");
             
             Application.Quit();

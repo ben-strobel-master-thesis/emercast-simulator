@@ -10,6 +10,8 @@ namespace Agents.Components
         [System.NonSerialized]
         public FixedString512Bytes ScenarioFilePath;
 
+        public bool ProtocolEnabled;
+
         public double ConnectivityRange;
         
         public double Phase0Duration;

@@ -35,7 +35,7 @@ namespace Scenario.Systems
                 ecb.SetComponent(scenarioFileProcessedTagEntity, scenarioFileProcessedTagComponent);
                 foreach (var (protocolComponent, transform, entity) in SystemAPI.Query<RefRW<ProtocolComponent>, RefRO<LocalTransform>>().WithNone<MaterialColor>().WithEntityAccess())
                 {
-                    if (math.distance(new float3(scenarioFileProcessedTagComponent.BroadcastPositionX, 0, scenarioFileProcessedTagComponent.BroadcastPositionZ), transform.ValueRO.Position) > scenarioFileProcessedTagComponent.BroadcastRadius) continue;
+                    if (math.distance(new float3(scenarioFileProcessedTagComponent.OutagePositionX, 0, scenarioFileProcessedTagComponent.OutagePositionZ), transform.ValueRO.Position) < scenarioFileProcessedTagComponent.OutageRadius) continue;
                     protocolComponent.ValueRW.HasMessage = true;
                     protocolComponent.ValueRW.Hops = 0;
                     foreach (var child in state.EntityManager.GetBuffer<Child>(entity))

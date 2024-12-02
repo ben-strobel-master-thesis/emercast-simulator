@@ -4,7 +4,8 @@
     {
         Spawn,
         AddDestination, 
-        Broadcast, 
+        Broadcast,
+        Outage,
         EndSimulation
     }
 }
