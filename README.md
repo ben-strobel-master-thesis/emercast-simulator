@@ -18,7 +18,7 @@ This repository also contains [code](https://github.com/ben-strobel-master-thesi
 
 I suggest having a look at the [Script Utils Repository](https://github.com/ben-strobel-master-thesis/script-utils) which uses this repository to run a batch simulation.
 
-### Command line arguments:
+### Arguments
 
 See native unity command line arguments here: [https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html](https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html)
 
@@ -28,7 +28,7 @@ Simulator specfic arguments:
 - -ConnectivityRange \<x\> Sets the max range for two agents to be able to connect/maintain a connection *(Optional, default 10)*
 - -Phase\<X\>Duration \<s\> Sets the duration of protocol phase x (0-4) to s seconds *(Optional, default 3,1,0.25,0.25,0.5)*
 
-### The scenariofile supports the following commands:
+### Scenariofile commands:
 - Spawn \<Id\> \<x\> \<y\>
 - AddDestination \<Id\> \<x\> \<y\>
 - Broadcast \<seconds\>
